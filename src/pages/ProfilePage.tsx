@@ -14,9 +14,7 @@ const ProfilePage = () => {
   // Mock videos data
   const videos = Array(10).fill(null).map((_, i) => ({
     id: `video-${i}`,
-    thumbnail: i % 3 === 0 ? "/lovable-uploads/9c6eb54d-5f54-4520-8208-4ec7c07c9c35.png" : 
-              i % 3 === 1 ? "/lovable-uploads/451e2e9d-9853-442c-905e-415cb3592c14.png" : 
-              "/lovable-uploads/b07825d5-59b3-4f95-a199-6c1906d289e8.png",
+    thumbnail: "/lovable-uploads/3f9f8240-af71-433a-ad0b-b602ba8e0a5f.png", 
     isCleared: i % 3 === 0,
     date: new Date(Date.now() - i * 86400000).toLocaleDateString(),
   }));

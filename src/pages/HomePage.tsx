@@ -3,9 +3,19 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import { Camera, UploadCloud } from "lucide-react";
+import { ScrollArea } from "../components/ui/scroll-area";
+import { Card, CardContent } from "../components/ui/card";
+import { Carousel, CarouselContent, CarouselItem } from "../components/ui/carousel";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  
+  // Mock climbing posts data 
+  const climbingPosts = Array(5).fill(null).map((_, i) => ({
+    id: `post-${i}`,
+    title: `클라이밍 포스트 ${i + 1}`,
+    image: "/lovable-uploads/3f9f8240-af71-433a-ad0b-b602ba8e0a5f.png",
+  }));
   
   return (
     <Layout title="로고" showBackButton={false}>
@@ -32,12 +42,32 @@ const HomePage = () => {
             </div>
           </div>
           
+          {/* Scrollable climbing posts */}
+          <div className="mb-5">
+            <h3 className="font-medium mb-3">최근 클라이밍</h3>
+            <ScrollArea className="h-64 w-full rounded-md">
+              <div className="flex flex-col space-y-4 p-1">
+                {climbingPosts.map((post) => (
+                  <Card key={post.id} className="rounded-lg overflow-hidden shadow-sm">
+                    <CardContent className="p-0">
+                      <img 
+                        src={post.image} 
+                        alt={post.title}
+                        className="w-full h-48 object-cover" 
+                      />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+          
           {/* 3D Joint tracking explanation */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-5">
             <h3 className="font-medium mb-3">클라이밍 3D 관절 이미지</h3>
             <div className="aspect-video bg-gray-100 flex items-center justify-center rounded-lg mb-3">
               <img 
-                src="/lovable-uploads/5d2086a1-43c0-43f2-a714-a45b484220f5.png" 
+                src="/lovable-uploads/3f9f8240-af71-433a-ad0b-b602ba8e0a5f.png" 
                 alt="3D Joint Tracking" 
                 className="object-cover w-full h-full rounded-lg"
               />
