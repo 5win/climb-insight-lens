@@ -170,14 +170,18 @@ const VideoAnalysis = ({ videoSrc, markers = [] }: VideoAnalysisProps) => {
           />
           
           {/* Render markers on timeline */}
-          {markers.map(marker => (
-            <div 
-              key={marker.id}
-              onClick={() => handleMarkerClick(marker)}
-              style={{ left: `${(marker.time / (duration || 1)) * 100}%` }}
-              className={`timeline-marker ${marker.type === 'positive' ? 'bg-green-500' : marker.type === 'negative' ? 'bg-red-500' : 'bg-yellow-500'}`}
-            ></div>
-          ))}
+          <div className="absolute top-0 left-0 right-0 h-2 pointer-events-none">
+            {markers.map(marker => (
+              <button
+                key={marker.id}
+                onClick={() => handleMarkerClick(marker)}
+                className={`absolute w-3 h-3 rounded-full -mt-0.5 transform -translate-x-1/2 cursor-pointer pointer-events-auto
+                  ${marker.type === 'positive' ? 'bg-green-500' : marker.type === 'negative' ? 'bg-red-500' : 'bg-yellow-500'}`}
+                style={{ left: `${(marker.time / (duration || 100)) * 100}%` }}
+                title={marker.message}
+              />
+            ))}
+          </div>
         </div>
         
         {/* Current feedback */}
