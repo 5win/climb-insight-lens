@@ -2,6 +2,19 @@
 import { useState } from "react";
 import Layout from "../components/layout/Layout";
 import { Search, Filter } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 // Mock data for demonstrations
 const MOCK_ROUTES = [
@@ -31,9 +44,19 @@ const MOCK_ROUTES = [
   },
 ];
 
+// Filter options
+const LOCATIONS = ["강남 논현", "홍대", "역삼"];
+const DIFFICULTIES = ["초급", "중급", "상급"];
+const COLORS = ["빨강", "노랑", "초록"];
+
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilters, setActiveFilters] = useState<string[]>(["강남 논현"]);
+  
+  // Selected filters
+  const [selectedLocation, setSelectedLocation] = useState<string | undefined>();
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string | undefined>();
+  const [selectedColor, setSelectedColor] = useState<string | undefined>();
   
   // Toggle filter selection
   const toggleFilter = (filter: string) => {
@@ -44,14 +67,25 @@ const SearchPage = () => {
     }
   };
 
-  // Filter tags
-  const filterTags = [
-    { id: "location-1", label: "강남 논현", category: "location" },
-    { id: "location-2", label: "홍대", category: "location" },
-    { id: "color-1", label: "빨강", category: "color" },
-    { id: "color-2", label: "노랑", category: "color" },
-    { id: "color-3", label: "초록", category: "color" },
-  ];
+  // Apply filter from popover
+  const applyFilter = (type: string, value: string) => {
+    if (value) {
+      // Remove any existing filters of this type
+      const filteredArray = activeFilters.filter(filter => 
+        !(type === 'location' && LOCATIONS.includes(filter)) &&
+        !(type === 'difficulty' && DIFFICULTIES.includes(filter)) &&
+        !(type === 'color' && COLORS.includes(filter))
+      );
+      
+      // Add the new filter
+      setActiveFilters([...filteredArray, value]);
+      
+      // Update the specific selected filter state
+      if (type === 'location') setSelectedLocation(value);
+      if (type === 'difficulty') setSelectedDifficulty(value);
+      if (type === 'color') setSelectedColor(value);
+    }
+  };
 
   return (
     <Layout title="검색">
@@ -68,28 +102,98 @@ const SearchPage = () => {
           <Search className="absolute left-3 top-3.5 text-gray-400" size={18} />
         </div>
         
-        {/* Filter chips */}
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide">
-          {filterTags.map((tag) => (
-            <button
-              key={tag.id}
-              onClick={() => toggleFilter(tag.label)}
-              className={`px-3 py-1.5 rounded-full text-sm whitespace-nowrap ${
-                activeFilters.includes(tag.label)
-                  ? tag.category === "color"
-                    ? `bg-${tag.label === "빨강" ? "red" : tag.label === "노랑" ? "yellow" : "green"}-500 text-white`
-                    : "bg-climbLens-blue text-white"
-                  : "bg-gray-100 text-gray-700"
-              }`}
-            >
-              {tag.label}
-            </button>
-          ))}
-          <button className="px-3 py-1.5 rounded-full text-sm whitespace-nowrap border border-dashed border-gray-300 flex items-center gap-1">
-            <Filter size={14} />
-            <span>필터</span>
-          </button>
+        {/* Filter buttons with popover */}
+        <div className="flex justify-between gap-2 mb-4">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="flex-1">
+                지점
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <div className="p-2">
+                {LOCATIONS.map((location) => (
+                  <div 
+                    key={location}
+                    className={`p-2 cursor-pointer rounded-md ${
+                      activeFilters.includes(location) ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => applyFilter('location', location)}
+                  >
+                    {location}
+                  </div>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+          
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="flex-1">
+                난이도
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <div className="p-2">
+                {DIFFICULTIES.map((difficulty) => (
+                  <div 
+                    key={difficulty}
+                    className={`p-2 cursor-pointer rounded-md ${
+                      activeFilters.includes(difficulty) ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => applyFilter('difficulty', difficulty)}
+                  >
+                    {difficulty}
+                  </div>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+          
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="flex-1">
+                홀드 색깔
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <div className="p-2">
+                {COLORS.map((color) => (
+                  <div 
+                    key={color}
+                    className={`p-2 cursor-pointer rounded-md flex items-center gap-2 ${
+                      activeFilters.includes(color) ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => applyFilter('color', color)}
+                  >
+                    <div className={`w-4 h-4 rounded-full ${
+                      color === "빨강" ? "bg-red-500" : 
+                      color === "노랑" ? "bg-yellow-500" : 
+                      "bg-green-500"
+                    }`}></div>
+                    {color}
+                  </div>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
+        
+        {/* Active filters display */}
+        {activeFilters.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {activeFilters.map((filter) => (
+              <div 
+                key={filter} 
+                className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center gap-1"
+                onClick={() => toggleFilter(filter)}
+              >
+                <span>{filter}</span>
+                <button className="ml-1">&times;</button>
+              </div>
+            ))}
+          </div>
+        )}
         
         {/* Results */}
         <div className="space-y-4 mb-16">
