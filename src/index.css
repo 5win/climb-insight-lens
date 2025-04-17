@@ -99,3 +99,73 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes pulse-record {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@layer components {
+  .camera-container {
+    @apply relative w-full aspect-[9/16] bg-black overflow-hidden rounded-md;
+  }
+  
+  .camera-overlay {
+    @apply absolute inset-0 z-10 flex items-center justify-center pointer-events-none;
+  }
+  
+  .recording-indicator {
+    @apply absolute top-4 right-4 flex items-center gap-2 bg-black/70 px-3 py-1 rounded-full text-white text-sm;
+  }
+  
+  .recording-dot {
+    @apply h-2 w-2 rounded-full bg-red-500;
+    animation: pulse-record 1.5s infinite;
+  }
+  
+  .button-primary {
+    @apply rounded-full bg-climbLens-blue text-white py-2 px-6 font-medium hover:bg-blue-600 transition-colors;
+  }
+  
+  .button-secondary {
+    @apply rounded-full bg-climbLens-gray text-white py-2 px-6 font-medium hover:bg-gray-600 transition-colors;
+  }
+  
+  .camera-guide-ok {
+    @apply text-green-500 font-medium;
+  }
+  
+  .camera-guide-error {
+    @apply text-red-500 font-medium;
+  }
+
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center py-3 px-2;
+  }
+  
+  .bottom-nav-item {
+    @apply flex flex-col items-center justify-center;
+  }
+
+  .video-timeline {
+    @apply w-full bg-gray-200 h-2 rounded-full overflow-hidden relative mt-2;
+  }
+  
+  .video-progress {
+    @apply absolute top-0 left-0 h-full bg-climbLens-blue;
+  }
+  
+  .timeline-marker {
+    @apply absolute top-0 h-4 w-1 bg-climbLens-yellow rounded-full transform -translate-y-1 cursor-pointer;
+  }
+
+  .feedback-bubble {
+    @apply bg-white p-3 rounded-lg shadow-md text-sm my-2 border-l-4 border-climbLens-blue;
+  }
+}

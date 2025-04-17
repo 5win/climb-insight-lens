@@ -52,6 +52,14 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				climbLens: {
+					blue: "#3b82f6",
+					yellow: "#fbbf24",
+					red: "#ef4444",
+					gray: "#9ca3af",
+					darkgray: "#4b5563",
+					lightgray: "#f3f4f6",
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
