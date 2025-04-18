@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/layout/Layout";
@@ -9,11 +8,20 @@ import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
 const HomePage = () => {
   const navigate = useNavigate();
   
+  // 이미지 경로 배열 생성
+  const climbingImages = [
+    "/climbing-images/full-shot-woman-climbing-wall.jpg",
+    "/climbing-images/man-rock-climbing-indoors-arena.jpg",
+    "/climbing-images/sportive-woman-clambering-wall-gym.jpg",
+    "/climbing-images/climbing-skeleton2.jpg",
+    "/climbing-images/KakaoTalk_20250418_170308572.jpg"
+  ];
+  
   // Mock climbing posts data with user information
   const climbingPosts = Array(10).fill(null).map((_, i) => ({
     id: `post-${i}`,
     title: `클라이밍 포스트 ${i + 1}`,
-    image: "/lovable-uploads/3f9f8240-af71-433a-ad0b-b602ba8e0a5f.png",
+    image: climbingImages[i % climbingImages.length], // 순환적으로 이미지 할당
     username: `클라이머${i + 1}`,
     userAvatar: null,
     date: new Date(Date.now() - i * 86400000).toLocaleDateString(),
@@ -93,7 +101,7 @@ const HomePage = () => {
           <h3 className="font-medium mb-3">클라이밍 3D 관절 이미지</h3>
           <div className="aspect-video bg-gray-100 flex items-center justify-center rounded-lg mb-3">
             <img 
-              src="/lovable-uploads/3f9f8240-af71-433a-ad0b-b602ba8e0a5f.png" 
+              src="/climbing-images/climbing-skeleton2.jpg" 
               alt="3D Joint Tracking" 
               className="object-cover w-full h-full rounded-lg"
             />
