@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Layout from "../components/layout/Layout";
 import { Settings, Grid3X3 } from "lucide-react";
@@ -7,14 +6,23 @@ const ProfilePage = () => {
   // Mock user data
   const user = {
     username: "이강민 #0782",
-    profileImage: null,
+    profileImage: "/climbing-images/sportive-woman-clambering-wall-gym.jpg",
     videoCount: 12,
   };
+
+  // 이미지 경로 배열 생성
+  const climbingImages = [
+    "/climbing-images/full-shot-woman-climbing-wall.jpg",
+    "/climbing-images/man-rock-climbing-indoors-arena.jpg",
+    "/climbing-images/sportive-woman-clambering-wall-gym.jpg",
+    "/climbing-images/climbing-skeleton2.jpg",
+    "/climbing-images/KakaoTalk_20250418_170308572.jpg"
+  ];
 
   // Mock videos data
   const videos = Array(10).fill(null).map((_, i) => ({
     id: `video-${i}`,
-    thumbnail: "/lovable-uploads/3f9f8240-af71-433a-ad0b-b602ba8e0a5f.png", 
+    thumbnail: climbingImages[i % climbingImages.length], 
     isCleared: i % 3 === 0,
     date: new Date(Date.now() - i * 86400000).toLocaleDateString(),
   }));

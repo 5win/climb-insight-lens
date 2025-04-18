@@ -1,10 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import VideoAnalysis from "../components/analysis/VideoAnalysis";
 import { Button } from "@/components/ui/button";
-import { Save, Share2, ArrowLeft } from "lucide-react";
+import { Save, Share2, ArrowLeft, Check } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 // Mock feedback data for demonstration
 const MOCK_FEEDBACK_MARKERS = [
@@ -34,6 +34,9 @@ const MOCK_FEEDBACK_MARKERS = [
   },
 ];
 
+// Sample climbing image as data URL (this would typically come from camera capture)
+const climbingImageDataURL = "/climbing-images/KakaoTalk_20250418_170308572.jpg";
+
 // Analysis stages
 enum AnalysisStage {
   PROCESSING,
@@ -44,6 +47,7 @@ const AnalysisPage = () => {
   const navigate = useNavigate();
   const [stage, setStage] = useState<AnalysisStage>(AnalysisStage.PROCESSING);
   const [showContinueModal, setShowContinueModal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Simulate analysis completion after a delay
   useEffect(() => {
@@ -54,19 +58,34 @@ const AnalysisPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleContinue = () => {
-    // In a real app, we would handle saving the recording here
-    setShowContinueModal(true);
+  const handleSave = () => {
+    // Show saving state
+    setIsSaving(true);
+    
+    // Simulate saving delay
+    setTimeout(() => {
+      // Show success notification
+      toast({
+        title: "저장 완료",
+        description: "로컬 갤러리에 저장되었어요!",
+        variant: "default",
+      });
+      
+      // Navigate to home screen after a short delay
+      setTimeout(() => {
+        setIsSaving(false);
+        navigate("/");
+      }, 1000);
+    }, 800);
   };
 
-  const handleSaveToGallery = () => {
-    // Here we would handle saving to gallery
-    setShowContinueModal(false);
-    navigate("/profile");
-  };
-
-  const handleReset = () => {
-    navigate("/camera");
+  const handleShare = () => {
+    // Implement share functionality
+    toast({
+      title: "공유하기",
+      description: "공유 기능은 준비 중입니다.",
+      variant: "default",
+    });
   };
 
   return (
@@ -74,46 +93,61 @@ const AnalysisPage = () => {
       title="분석" 
       showBackButton={true}
       showNav={false}
-      className="flex flex-col"
+      className="flex flex-col h-[100vh] overflow-hidden"
     >
       {stage === AnalysisStage.PROCESSING ? (
         <div className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-          <div className="w-20 h-20 mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+          <div className="w-16 h-16 mb-2 rounded-full bg-gray-100 flex items-center justify-center">
             <img 
-              src="/lovable-uploads/aa16f190-1bcb-4503-9244-0bd3d0dde66e.png" 
+              src="/climbing-images/climbing-skeleton2.jpg" 
               alt="Analysis" 
-              className="w-10 h-10 opacity-70"
+              className="w-8 h-8 opacity-70"
             />
           </div>
-          <h2 className="text-xl font-semibold mb-2">영상을 분석하고 있어요</h2>
-          <p className="text-gray-600 mb-4">분석이 될때 진행 바를 넘어서 지루하지 않게 함</p>
-          <div className="w-full max-w-xs bg-gray-200 rounded-full h-2.5 mb-6">
-            <div className="bg-climbLens-blue h-2.5 rounded-full w-1/2"></div>
+          <h2 className="text-lg font-semibold mb-1">영상을 분석하고 있어요</h2>
+          <p className="text-sm text-gray-600 mb-3">영상을 분석중이에요</p>
+          <div className="w-full max-w-xs bg-gray-200 rounded-full h-2 mb-4">
+            <div className="bg-climbLens-blue h-2 rounded-full w-1/2"></div>
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col">
-          <VideoAnalysis markers={MOCK_FEEDBACK_MARKERS} />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Main analysis content */}
+          <div className="flex-1 overflow-hidden">
+            <VideoAnalysis 
+              markers={MOCK_FEEDBACK_MARKERS} 
+              customImageSrc={climbingImageDataURL}
+            />
+          </div>
           
-          <div className="p-4 space-y-4">
-            <div className="feedback-bubble">
-              <h3 className="font-medium mb-1">전체 분석 요약</h3>
-              <p className="text-sm text-gray-700">
-                전반적으로 안정적인 클라이밍 자세를 유지하고 있으나, 상체에 힘이 과도하게 들어가 있습니다. 
-                발의 위치는 좋지만 무릎 유연성이 부족하여 효율적인 움직임에 제한이 있습니다.
-              </p>
-            </div>
-            
-            <div className="flex gap-2">
+          {/* Action buttons at bottom */}
+          <div className="flex-shrink-0 p-3 bg-white border-t border-gray-200">
+            <div className="grid grid-cols-2 gap-3">
               <Button 
-                onClick={handleContinue}
-                className="flex-1 button-primary"
+                onClick={handleSave}
+                disabled={isSaving}
+                className="w-full py-5 bg-white border border-gray-300 rounded-md text-black hover:bg-gray-50 transition-all relative"
+                variant="outline"
               >
-                <Save size={16} className="mr-1" />
-                저장하기
+                {isSaving ? (
+                  <>
+                    <span className="opacity-0">저장하기</span>
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <svg className="animate-spin h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </span>
+                  </>
+                ) : (
+                  "저장하기"
+                )}
               </Button>
-              <Button variant="outline" className="flex-1">
-                <Share2 size={16} className="mr-1" />
+              <Button 
+                onClick={handleShare}
+                variant="outline" 
+                className="w-full py-5 bg-white border border-gray-300 rounded-md text-black hover:bg-gray-50"
+              >
                 공유하기
               </Button>
             </div>
@@ -121,26 +155,14 @@ const AnalysisPage = () => {
         </div>
       )}
 
-      {/* Continue modal */}
-      {showContinueModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-sm w-full p-5">
-            <h3 className="text-lg font-semibold mb-3">뒤로 가시겠어요?</h3>
-            <p className="text-gray-600 mb-4">아직 분석이 진행 중이에요</p>
-            <div className="flex gap-2">
-              <button 
-                onClick={() => setShowContinueModal(false)}
-                className="flex-1 py-2 bg-white border border-gray-300 rounded-md"
-              >
-                뒤로가기
-              </button>
-              <button 
-                onClick={handleSaveToGallery}
-                className="flex-1 py-2 bg-climbLens-blue text-white rounded-md"
-              >
-                기다릴게요
-              </button>
+      {/* Success message for saved content */}
+      {isSaving && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg py-4 px-6 flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-3">
+              <Check className="w-6 h-6 text-green-600" />
             </div>
+            <p className="text-center font-medium">로컬 갤러리에 저장되었어요!</p>
           </div>
         </div>
       )}
